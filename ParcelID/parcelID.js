@@ -4,22 +4,47 @@ let lat;
 let lng;
 let title;
 
-let input = document.getElementById("input");
-input.addEventListener("change", function () {
-  readXlsxFile(input.files[0]).then(function (data) {
-    let i = 0;
-    data.map((row, index) => {
-      if (i === 0) {
-        let table = document.getElementById("tbl-data");
-        generateTableHead(table, row);
-      }
-      if (i > 0) {
-        let table = document.getElementById("tbl-data");
-        generateTableRows(table, row);
-      }
+// let input = document.getElementById("input");
+// input.addEventListener("change", function () {
+//   readXlsxFile(input.files[0]).then(function (data) {
+//     let i = 0;
+//     data.map((row, index) => {
+//       if (i === 0) {
+//         let table = document.getElementById("tbl-data");
+//         generateTableHead(table, row);
+//       }
+//       if (i > 0) {
+//         let table = document.getElementById("tbl-data");
+//         generateTableRows(table, row);
+//       }
+//     });
+//   });
+// });
+
+async function getTokens() {
+  try {
+    const response = await fetch("https://accounts.zoho.com/oauth/v2/token", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: `grant_type=authorization_code&client_id=1000.VUMOJ02VDJNP7NZXRPAR3ZDIBMIGJO&client_secret=10bcc88bd47ed981ece5faa3dcc058d6c8894c65b7&code=1000.a37ee2b77486eec958c379acab3d5948.1cf87f66f5a708219688a9c2b95f471c`,
     });
-  });
-});
+    const data = await response.json();
+
+    // extract the access and refresh tokens from the response data
+    const accessToken = data.access_token;
+    const refreshToken = data.refresh_token;
+
+    // do something with the access and refresh tokens
+    console.log(accessToken, refreshToken);
+  } catch (error) {
+    // handle any errors that occur during the fetch request
+    console.error(error);
+  }
+}
+
+getTokens();
 
 function initMap() {
   const request = new XMLHttpRequest();
