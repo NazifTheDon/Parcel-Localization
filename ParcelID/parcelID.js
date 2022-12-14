@@ -1,52 +1,52 @@
-let parcelIDExample = 20134200210010000;
+//let parcelIDExample = 20134200210010000;
 let map;
 let lat;
 let lng;
 let title;
 
-// let input = document.getElementById("input");
-// input.addEventListener("change", function () {
-//   readXlsxFile(input.files[0]).then(function (data) {
-//     let i = 0;
-//     data.map((row, index) => {
-//       if (i === 0) {
-//         let table = document.getElementById("tbl-data");
-//         generateTableHead(table, row);
-//       }
-//       if (i > 0) {
-//         let table = document.getElementById("tbl-data");
-//         generateTableRows(table, row);
-//       }
-//     });
-//   });
-// });
-
-async function getTokens() {
-  try {
-    const response = await fetch("https://accounts.zoho.com/oauth/v2/token", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: `grant_type=authorization_code&client_id=1000.VUMOJ02VDJNP7NZXRPAR3ZDIBMIGJO&client_secret=10bcc88bd47ed981ece5faa3dcc058d6c8894c65b7&code=1000.a37ee2b77486eec958c379acab3d5948.1cf87f66f5a708219688a9c2b95f471c`,
+function getTokens() {
+  fetch("https://www.zohoapis.com/crm/v2/Leads", {
+    method: "GET",
+    headers: {
+      Authorization:
+        "Zoho-oauthtoken 1000.6378758ecbb5792dcc5971f142b7b33d.3a896af072dbe06f2838761fb87efa75",
+    },
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data);
+    })
+    .catch((error) => {
+      console.error(error);
     });
-    const data = await response.json();
-
-    // extract the access and refresh tokens from the response data
-    const accessToken = data.access_token;
-    const refreshToken = data.refresh_token;
-
-    // do something with the access and refresh tokens
-    console.log(accessToken, refreshToken);
-  } catch (error) {
-    // handle any errors that occur during the fetch request
-    console.error(error);
-  }
 }
 
-getTokens();
+// function getTokens() {
+//   const xhr = new XMLHttpRequest();
+//   xhr.open("POST", "https://accounts.zoho.com/oauth/v2/token", true);
+//   xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+//   xhr.onload = function () {
+//     if (xhr.status === 200) {
+//       const response = JSON.parse(xhr.responseText);
+//       const accessToken = response.access_token;
+//       const refreshToken = response.refresh_token;
+//       console.log(accessToken, refreshToken);
+//     } else {
+//       console.error(xhr.statusText);
+//     }
+//   };
+//   xhr.onerror = function () {
+//     console.error(xhr.statusText);
+//   };
+//   xhr.send(
+//     `grant_type=authorization_code&client_id=1000.VUMOJ02VDJNP7NZXRPAR3ZDIBMIGJO&client_secret=10bcc88bd47ed981ece5faa3dcc058d6c8894c65b7&redirect_uri=http://welcome/yourcallback&code=1000.ea5300e22c76d92ba076c741af2626bc.be477e41bca19d687ef61c5984bda5e9`
+//   );
+// }
+
+//getTokens();
 
 function initMap() {
+  getTokens();
   const request = new XMLHttpRequest();
   request.open(
     "GET",
