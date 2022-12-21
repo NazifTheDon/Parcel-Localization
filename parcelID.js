@@ -9,11 +9,12 @@ async function getTokens() {
 
 async function initMap() {
   info = await getTokens();
+  //console.log(info[2]["Lead_Status"]);
   map = new google.maps.Map(document.getElementById("map"), {
     center: { lat: 40.052059, lng: -86.470642 },
     zoom: 5,
   });
-  for (let i = 0; i < info.length; i++) {
+  for (let i = 0; i < 50; i++) {
     if (info[i]["Parcel_ID"] !== null || info[i]["Zip_Code"] !== null) {
       console.log(info[i]["Parcel_ID"]);
       console.log(info[i]["Zip_Code"]);
@@ -25,6 +26,7 @@ async function initMap() {
       );
       request.send();
       request.onload = () => {
+        console.log(request.response);
         if (request.status === 200) {
           //title = JSON.parse(request.response)["results"][0]["parcel_id"];
           let lat = parseFloat(
@@ -38,6 +40,15 @@ async function initMap() {
             position: { lat: lat, lng: lng },
             map: map,
           };
+
+          if (info[i]["Lead_Status"] === "Contacted") {
+            markerOption.icon =
+              "https://maps.google.com/mapfiles/ms/icons/green-dot.png";
+          } else if (info[i]["Lead_Status"] === "Left Voicemail") {
+            markerOption.icon =
+              "https://maps.google.com/mapfiles/ms/icons/blue-dot.png";
+          }
+
           let marker = new google.maps.Marker(markerOption);
           marker.setMap(map);
         } else {
