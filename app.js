@@ -4,9 +4,59 @@ const cors = require("cors");
 const MongoClient = require("mongodb").MongoClient;
 const app = express();
 const requestModule = require("request");
+const fs = require("fs");
 
 app.use(cors());
-app.get("/api/tokens", (request, response) => {
+let accessToken;
+
+const refreshAccessToken = () => {
+  // Set up the options for the API call to refresh the access token
+  const options = {
+    hostname: "accounts.zoho.com",
+    port: 443,
+    path: "/oauth/v2/token",
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+  };
+
+  // Set up the body of the request
+  const refreshToken =
+    "1000.694e904d8c06a75321ebc752ac8e597e.ae6a2b1030eb2c83fca0c9f8c90170e3";
+  const clientId = "1000.UQJ7KP5JKNHFJY601GOUOK2KAJOF4W";
+  const clientSecret = "d01cf6e97a4538e1d97ffdfeeda5958fddbd087d21";
+  const grantType = "refresh_token";
+  const body = `refresh_token=${refreshToken}&client_id=${clientId}&client_secret=${clientSecret}&grant_type=${grantType}`;
+
+  // Make the API call to refresh the access token
+  const req = https.request(options, (res) => {
+    let data = "";
+    res.on("data", (chunk) => {
+      data += chunk;
+    });
+    res.on("end", () => {
+      // Parse the response data as JSON
+      const tokenResponse = JSON.parse(data);
+      // Extract the new access token from the response
+      accessToken = tokenResponse.access_token;
+      // Save the access token to a file
+      console.log(accessToken);
+      fs.writeFileSync("access_token.txt", accessToken);
+    });
+  });
+
+  // Set the body of the request and send it
+  req.write(body);
+  req.end();
+};
+
+// Set up a timer to refresh the access token every hour
+setInterval(refreshAccessToken, 3600000);
+
+app.get("/api/tokens", (response) => {
+  accessToken = fs.readFileSync("access_token.txt", "utf8");
+  console.log(accessToken);
   // Make a request to the Zoho CRM API to get the leads data
   const options = {
     hostname: "www.zohoapis.com",
@@ -14,8 +64,7 @@ app.get("/api/tokens", (request, response) => {
     path: "/crm/v2/Leads",
     method: "GET",
     headers: {
-      Authorization:
-        "Zoho-oauthtoken 1000.83e67e919a870af9a5e0bf76814bf48b.7314f9d99db35d09adbca4c78cee07e3",
+      Authorization: `Zoho-oauthtoken ${accessToken}`,
     },
   };
   const req = https.request(options, (res) => {
@@ -26,6 +75,7 @@ app.get("/api/tokens", (request, response) => {
     res.on("end", () => {
       // Parse the response data as JSON
       const leads = JSON.parse(data);
+      console.log(data);
       // Extract the parcel_id, zip_code, and lead_status for each lead
       const leadData = leads.data.map((lead) => ({
         parcel_id: lead.Parcel_ID,
