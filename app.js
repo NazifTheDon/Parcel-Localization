@@ -23,9 +23,9 @@ const refreshAccessToken = () => {
 
   // Set up the body of the request
   const refreshToken =
-    "1000.694e904d8c06a75321ebc752ac8e597e.ae6a2b1030eb2c83fca0c9f8c90170e3";
-  const clientId = "1000.UQJ7KP5JKNHFJY601GOUOK2KAJOF4W";
-  const clientSecret = "d01cf6e97a4538e1d97ffdfeeda5958fddbd087d21";
+    "";
+  const clientId = "";
+  const clientSecret = "";
   const grantType = "refresh_token";
   const body = `refresh_token=${refreshToken}&client_id=${clientId}&client_secret=${clientSecret}&grant_type=${grantType}`;
 
@@ -84,7 +84,7 @@ app.get("/api/tokens", (response) => {
       }));
       // Connect to the MongoDB database
       MongoClient.connect(
-        "mongodb+srv://NazifTheDon:Aareyuok.123@map.fzvcuyl.mongodb.net/?retryWrites=true&w=majority",
+        "",
         { useNewUrlParser: true, useUnifiedTopology: true },
         (err, client) => {
           if (err) {
@@ -110,7 +110,7 @@ app.get("/api/tokens", (response) => {
                 console.log(lead.zip_code);
                 // Use the request module to make a request to the reportallusa API
                 requestModule(
-                  `https://reportallusa.com/api/parcels?client=FXgevQoNSg&v=5&region=${lead["Zip_Code"]}&parcel_id=${lead["Parcel_ID"]}`,
+                  ``
                   (error, reportallusaRes, body) => {
                     if (error) {
                       console.error(error);
